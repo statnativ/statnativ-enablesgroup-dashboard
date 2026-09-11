@@ -72,6 +72,24 @@ end state).
 
 ## Deployment
 
-Target: Cloudflare Pages, custom domain `enablesgroup.statnativ.com`, build
-command `npm run build`, output directory `dist`. Full steps in the
-deployment guide sections 12–13.
+Target: **GitHub Pages**, deployed via `.github/workflows/deploy.yml` on every
+push to `main` (build → `dist/` → `actions/deploy-pages`), custom domain
+`enablesgroup.statnativ.com` via `public/CNAME`. Deliberately a different host
+than the deployment guide's original Cloudflare Pages plan (sections 12–13),
+chosen to keep everything on the same platform as the public site — same
+tradeoffs apply (free tier, no server-side code needed for this app).
+
+Two things GitHub Pages needs that Cloudflare/Vercel/Netlify don't:
+
+- **SPA fallback**: GitHub Pages has no server-side rewrites, so a direct
+  load/refresh of a client-side route (e.g. `/dashboard/documents`) would
+  404. The workflow copies `dist/index.html` to `dist/404.html` so GitHub
+  Pages serves the SPA shell for any unknown path, and React Router then
+  renders the right route client-side.
+- **Repo settings**: Pages must be enabled with source "GitHub Actions" (not
+  a branch), and the custom domain set to `enablesgroup.statnativ.com` —
+  done once via `gh api`/repo settings, not part of the workflow itself.
+
+DNS (wherever `statnativ.com` DNS is managed, separate from anything in this
+repo): add `enablesgroup CNAME statnativ.github.io.` — this only adds a new
+subdomain and does not touch the existing record serving `www.statnativ.com`.
