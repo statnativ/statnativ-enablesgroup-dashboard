@@ -60,7 +60,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="btn-primary" disabled={submitting}>
+          <button type="submit" className="btn-primary full" disabled={submitting}>
             {submitting ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
