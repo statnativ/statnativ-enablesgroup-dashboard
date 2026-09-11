@@ -43,6 +43,24 @@ The very first admin (`user_client_access` row) for a client must be inserted
 from the Supabase SQL editor or with the service-role key — see the note at
 the bottom of `supabase/schema.sql`.
 
+### Creating the enableSME users
+
+`scripts/create-users.mjs` creates every dashboard account (1 admin + 6
+read-only) and grants each the right role in one run. It needs your
+Supabase **service-role key** (Project Settings → API), which must never be
+committed or shared — put it in a git-ignored `.env.server.local` (or pass
+env vars inline) and run:
+
+```bash
+node scripts/create-users.mjs
+```
+
+See the comments at the top of that file for the exact env vars and a note
+on why a shared password across every read-only account is worth moving off
+of once initial access is sorted (per the deployment guide §3/§8, individual
+credentials — ideally via Supabase's invite-email flow — are the intended
+end state).
+
 ## Data model & security notes
 
 - The `documents` table stores **status only** — never upload passports,
