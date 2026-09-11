@@ -27,6 +27,7 @@ import { readFileSync, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { createClient } from '@supabase/supabase-js'
+import ws from 'ws'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -68,6 +69,10 @@ const ADMIN_USER = 'amittiwari@statnativ.com'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
+  // This script only uses the Admin API and plain table writes — no realtime
+  // channels — but supabase-js still initializes a RealtimeClient in the
+  // constructor, which throws on Node < 22 without a WebSocket polyfill.
+  realtime: { transport: ws },
 })
 
 async function ensureUser(email, password) {
